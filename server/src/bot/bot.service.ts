@@ -6,6 +6,10 @@ import { Telegraf } from 'telegraf';
 export class BotService {
   constructor(@InjectBot() private bot: Telegraf) {}
 
+  async sendTextMessage(userId: number, text: string) {
+    await this.bot.telegram.sendMessage(userId, text);
+  }
+
   async alertUserHaveAccess(userId: string) {
     await this.bot.telegram.sendMessage(
       Number(userId),

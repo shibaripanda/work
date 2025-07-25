@@ -1,5 +1,13 @@
 import { BotService } from './bot.service';
-import { Command, Ctx, Hears, On, Start, Update } from 'nestjs-telegraf';
+import {
+  Action,
+  Command,
+  Ctx,
+  Hears,
+  On,
+  Start,
+  Update,
+} from 'nestjs-telegraf';
 import { AppService } from 'src/app/app.service';
 import { Context } from 'telegraf';
 
@@ -23,6 +31,14 @@ export class TelegramGateway {
   @Start()
   async start(@Ctx() ctx: Context) {
     await ctx.reply('get start');
+  }
+
+  @Action('closeAccess')
+  async closeAccess(@Ctx() ctx: Context) {
+    console.log('Access close');
+    if (ctx && ctx.from) {
+      await this.botService.sendTextMessage(ctx.from.id, 'Доступ закрыт');
+    }
   }
 
   @Command('enter')
