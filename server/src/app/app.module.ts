@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -32,7 +32,7 @@ import { JwtModule } from '@nestjs/jwt';
       }),
     }),
     MongooseModule.forFeature([{ name: 'App', schema: AppSchema }]),
-    BotModule,
+    forwardRef(() => BotModule),
     UserModule,
   ],
   controllers: [AppController],

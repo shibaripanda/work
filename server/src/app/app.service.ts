@@ -3,6 +3,7 @@ import { TokenData } from './interfaces/tokenData';
 import { v4 as uuidv4 } from 'uuid';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { TokenAndUserId } from './interfaces/tokenAndUserId';
 
 @Injectable()
 export class AppService {
@@ -28,7 +29,7 @@ export class AppService {
     return token;
   }
 
-  async validateToken(token: string): Promise<string | null> {
+  async validateToken(token: string): Promise<TokenAndUserId | null> {
     console.log(this.tokens);
     console.log(token);
     const data: TokenData | undefined = this.tokens.get(token);
@@ -36,6 +37,9 @@ export class AppService {
 
     data.used = true;
     this.tokens.set(token, data);
-    return await this.jwt.signAsync({ userId: data.userId });
+    return {
+      token: await this.jwt.signAsync({ userId: data.userId }),
+      userId: data.userId,
+    };
   }
 }

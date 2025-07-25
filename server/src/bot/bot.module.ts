@@ -19,5 +19,6 @@ import { AppModule } from 'src/app/app.module';
   ],
   controllers: [],
   providers: [BotService, BotLifecycleService, TelegramGateway],
+  exports: [BotService],
 })
 export class BotModule {}
