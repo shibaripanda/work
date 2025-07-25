@@ -1,18 +1,31 @@
-import { Title, Text } from "@mantine/core";
-import * as classes from "./Welcome.css";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { ColorSchemeToggle } from "../../components/colorSchemeToggle/ColorSchemeToggle";
+import { TitleWelcom } from "../../components/title/TitleWelcom";
 
-export function Welcome() {
+export function StartPage() {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
+  const [status, setStatus] = useState<string>('CLOSE')
   const navigate = useNavigate();
   console.log(token)
   console.log(import.meta.env.VITE_WEB_URL)
 
   useEffect(() => {
-    auth()
+    if(token){
+      console.log('ENTER AUTH')
+      auth()
+    }
+    else if(sessionStorage.getItem('token')){
+      console.log('REDY FOR WORK')
+      setStatus('GAMEBOT')
+      navigate('/dashboard')
+    }
+    else{
+      console.log('CLOSE AUTH')
+      setStatus('CLOSE')
+    }
   }, [])
 
   const auth = async () => {
@@ -22,7 +35,7 @@ export function Welcome() {
       console.log(res.data)
       sessionStorage.setItem('token', res.data.token)
       console.log(sessionStorage.getItem('token'))
-      navigate('/')
+      navigate('/dashboard')
     })
     .catch((e) => {
       console.log(e.response.data.message)
@@ -31,16 +44,8 @@ export function Welcome() {
 
   return (
     <>
-      <Title className={classes.title} ta="center" mt={100}>
-        <Text
-          inherit
-          variant="gradient"
-          component="span"
-          gradient={{ from: "pink", to: "yellow" }}
-        >
-          GAMEBOT
-        </Text>
-      </Title>
+      <TitleWelcom title={status}/>
+      <ColorSchemeToggle/>
     </>
   );
 }
