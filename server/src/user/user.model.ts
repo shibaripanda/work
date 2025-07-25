@@ -2,12 +2,24 @@ import * as mongoose from 'mongoose';
 
 export const UserSchema = new mongoose.Schema(
   {
-    link: {
+    id: {
+      type: Number,
+      require: true,
+      unique: true,
+    },
+    first_name: {
       type: String,
+      require: true,
       default: '',
     },
-    name: {
+    username: {
       type: String,
+      require: true,
+      default: '',
+    },
+    language_code: {
+      type: String,
+      require: true,
       default: '',
     },
   },
@@ -15,8 +27,10 @@ export const UserSchema = new mongoose.Schema(
 );
 
 export interface User {
-  link?: string;
-  name?: string;
+  id: number;
+  first_name?: string;
+  username?: string;
+  language_code?: string;
 }
 
 export type UserDocument = User & mongoose.Document;

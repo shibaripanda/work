@@ -7,17 +7,19 @@ import {
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger } from '@nestjs/common';
-import { SocketAuthMiddleware } from 'src/app/socket-auth.middleware';
+import { Logger, UseGuards } from '@nestjs/common';
+import { SocketAuthMiddleware } from 'src/app/auth-guards/socket-auth.middleware';
+import { WsJwtAuthGuard } from './auth-guards/socket-auth.guard';
 
 @WebSocketGateway({
   cors: {
-    origin: '*', // настроить под себя
+    origin: '*',
   },
 })
 export class AppGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect
 {
+  constructor(private readonly socketAuthMiddleware: SocketAuthMiddleware) {}
   @WebSocketServer()
   server: Server;
 
@@ -25,7 +27,7 @@ export class AppGateway
 
   afterInit(server: Server) {
     server.use((socket, next) => {
-      new SocketAuthMiddleware().use(socket, next);
+      this.socketAuthMiddleware.use(socket, next);
     });
     this.logger.log('Socket server initialized');
   }
@@ -39,6 +41,7 @@ export class AppGateway
   }
 
   @SubscribeMessage('messageToServer')
+  @UseGuards(WsJwtAuthGuard)
   handleMessage(client: Socket, payload: any): void {
     this.logger.log(
       `Received message from ${client.id}: ${JSON.stringify(payload)}`,

@@ -8,6 +8,7 @@ import { UserModule } from 'src/user/user.module';
 import { AppGateway } from './app.gateway';
 import { AppSchema } from './app.model';
 import { JwtModule } from '@nestjs/jwt';
+import { SocketAuthMiddleware } from './auth-guards/socket-auth.middleware';
 
 @Module({
   imports: [
@@ -36,7 +37,7 @@ import { JwtModule } from '@nestjs/jwt';
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AppGateway],
+  providers: [AppService, AppGateway, SocketAuthMiddleware],
   exports: [AppService],
 })
 export class AppModule {}

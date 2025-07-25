@@ -6,6 +6,7 @@ import { BotLifecycleService } from './bot-lifecycle.service';
 import { ConfigService } from '@nestjs/config';
 // import { AppService } from 'src/app/app.service';
 import { AppModule } from 'src/app/app.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AppModule } from 'src/app/app.module';
       }),
     }),
     forwardRef(() => AppModule),
+    forwardRef(() => UserModule),
   ],
   controllers: [],
   providers: [BotService, BotLifecycleService, TelegramGateway],

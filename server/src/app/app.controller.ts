@@ -9,10 +9,10 @@ export class AppController {
     private botService: BotService,
   ) {}
 
-  @Get()
-  handleToken1() {
-    console.log('Test');
-  }
+  // @Get()
+  // handleToken1() {
+  //   console.log('Test');
+  // }
 
   @Get('access/:token')
   async checkToken(@Param('token') startToken: string) {
