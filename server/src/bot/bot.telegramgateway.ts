@@ -1,3 +1,4 @@
+import { Update as UpdateTelegraf } from '@telegraf/types';
 import { BotService } from './bot.service';
 import {
   Action,
@@ -10,7 +11,7 @@ import {
 } from 'nestjs-telegraf';
 import { AppService } from 'src/app/app.service';
 import { UserService } from 'src/user/user.service';
-import { Context } from 'telegraf';
+import { Context, NarrowedContext } from 'telegraf';
 
 @Update()
 export class TelegramGateway {
@@ -21,7 +22,9 @@ export class TelegramGateway {
   ) {}
 
   @On('chat_member')
-  async onChatMemberUpdate(@Ctx() ctx: Context) {
+  async onChatMemberUpdate(
+    @Ctx() ctx: NarrowedContext<Context, UpdateTelegraf.ChatMemberUpdate>,
+  ) {
     const update = ctx.update.chat_member;
     const user = update.new_chat_member.user;
     const chatId = update.chat.id;
@@ -31,11 +34,12 @@ export class TelegramGateway {
     const telegramId = user.id;
 
     // Проверка оплаты через сервис доступа
-    const hasAccess = await this.accessService.hasAccess(telegramId);
+    const hasAccess = true; //await this.accessService.hasAccess(telegramId) || true;
 
     if (!hasAccess) {
       // Удаляем пользователя, если нет доступа
-      await ctx.telegram.kickChatMember(chatId, telegramId);
+      await ctx.telegram.banChatMember(chatId, telegramId);
+      await ctx.telegram.unbanChatMember(chatId, telegramId);
       await ctx.telegram.sendMessage(
         telegramId,
         '❌ У вас нет доступа. Оплатите подписку, чтобы вступить в канал.',
